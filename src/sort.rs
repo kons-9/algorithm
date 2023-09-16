@@ -32,6 +32,8 @@ pub trait HeapSort {
 
 pub trait MergeSort {
     fn merge_sort(&mut self);
+    fn _merge_sort(&mut self, left: usize, right: usize);
+    fn _merge_sort_len(&self) -> usize;
 }
 
 impl<T> BubbleSort for [T]
@@ -138,6 +140,59 @@ where
     }
 }
 
+impl<T> MergeSort for [T]
+where
+    T: Ord + Clone,
+{
+    fn merge_sort(&mut self) {
+        self._merge_sort(0, self.len() - 1);
+    }
+    fn _merge_sort(&mut self, left: usize, right: usize) {
+        if left >= right {
+            return;
+        }
+
+        let tmp_len = right - left + 1;
+        let mut tmp: Vec<T> = Vec::with_capacity(tmp_len);
+
+        let mid = (left + right) / 2;
+
+        self._merge_sort(left, mid);
+        self._merge_sort(mid + 1, right);
+
+        let mut left_now = left;
+        let mut right_now = mid + 1;
+
+        for _ in 0..tmp_len {
+            if left_now > mid {
+                tmp.push(self[right_now].clone());
+                right_now += 1;
+                continue;
+            }
+            if right_now > right {
+                tmp.push(self[left_now].clone());
+                left_now += 1;
+                continue;
+            }
+
+            if self[left_now] <= self[right_now] {
+                tmp.push(self[left_now].clone());
+                left_now += 1;
+            } else {
+                tmp.push(self[right_now].clone());
+                right_now += 1;
+            }
+        }
+
+        for i in 0..tmp_len {
+            self[left + i] = tmp[i].clone();
+        }
+    }
+    fn _merge_sort_len(&self) -> usize {
+        self.len()
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -177,6 +232,16 @@ mod test {
 
         let mut v = vec![3, 2, 1, 4, 5, 6, 7, 8, 9, 4, 5, 6, 7];
         v.heap_sort();
+        assert_eq!(v, vec![1, 2, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 9]);
+    }
+    #[test]
+    fn test_merge_sort() {
+        let mut v = vec![3, 2, 1, 4, 5];
+        v.merge_sort();
+        assert_eq!(v, vec![1, 2, 3, 4, 5]);
+
+        let mut v = vec![3, 2, 1, 4, 5, 6, 7, 8, 9, 4, 5, 6, 7];
+        v.merge_sort();
         assert_eq!(v, vec![1, 2, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 9]);
     }
 }
