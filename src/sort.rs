@@ -1,5 +1,10 @@
 use std::fmt::Debug;
 
+pub trait CustomSort {
+    type Item;
+    fn sort_by(&mut self, cmp: fn(&Self::Item, &Self::Item) -> bool);
+}
+
 pub trait Sort {
     // default sort method
     fn sort(&mut self);
