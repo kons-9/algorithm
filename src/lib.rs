@@ -5,3 +5,4 @@ pub mod monoid;
 pub mod num;
 pub mod sort;
 pub mod union_find;
+pub mod segtree;
